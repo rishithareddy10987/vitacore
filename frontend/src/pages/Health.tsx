@@ -129,7 +129,7 @@ export default function Health() {
   // Fetch Database Logs
   const fetchLogs = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/health");
+      const res = await axios.get("https://vitacore-backend-sue1.onrender.com/api/health");
       if (Array.isArray(res.data)) {
         setLogs(res.data);
       } else {
@@ -158,7 +158,7 @@ export default function Health() {
     setFitnessError("");
     setFitnessPlan(null);
     try {
-      const res = await axios.get("http://localhost:5000/api/health/fitness-plan");
+      const res = await axios.get("https://vitacore-backend-sue1.onrender.com/api/health/fitness-plan");
       setFitnessPlan(res.data);
     } catch (err: unknown) {
       console.error("Error generating fitness plan:", err);
@@ -177,7 +177,7 @@ export default function Health() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/health", formData);
+      await axios.post("https://vitacore-backend-sue1.onrender.com/api/health", formData);
       localStorage.setItem("sleepHours", formData.sleepHours.toString());
       localStorage.setItem("waterGlasses", formData.waterGlasses.toString());
       localStorage.setItem("caloriesConsumed", formData.caloriesConsumed.toString());
@@ -210,7 +210,7 @@ export default function Health() {
     setFoodResult(null);
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/health/nutrition?query=${encodeURIComponent(foodQuery)}`);
+      const res = await axios.get(`https://vitacore-backend-sue1.onrender.com/api/health/nutrition?query=${encodeURIComponent(foodQuery)}`);
       if (res.data && Array.isArray(res.data.items)) {
         if (res.data.items.length === 0) {
           const hint = res.data.hint || "";
