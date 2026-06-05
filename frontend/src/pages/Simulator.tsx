@@ -46,7 +46,7 @@ export default function Simulator() {
     try {
 
       const response = await axios.post(
-        "http://127.0.0.1:8000/simulate",
+        "https://vitacore-ml.onrender.com/simulate",
         {
           sleep: params.sleep,
           exercise: params.exercise,
