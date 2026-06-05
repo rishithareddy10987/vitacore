@@ -29,7 +29,7 @@ export function AIAssistantWidget() {
     setIsTyping(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/ai/recommend", {
+      const response = await axios.post("https://vitacore-backend-sue1.onrender.com/api/ai/recommend", {
         domain: "General",
         context: {
           query: input,
