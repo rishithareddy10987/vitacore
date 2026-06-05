@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const res = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+    const res = await axios.post("http://https://vitacore-backend-sue1.onrender.com/api/auth/login", { email, password });
     setUser(res.data);
     setIsLoggedIn(true);
     localStorage.setItem("vitacore_user", JSON.stringify(res.data));
@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (name: string, email: string, password: string) => {
-    const res = await axios.post("http://localhost:5000/api/auth/register", { name, email, password, phoneNumber: "" });
+    const res = await axios.post("http://https://vitacore-backend-sue1.onrender.com/api/auth/register", { name, email, password, phoneNumber: "" });
     setUser(res.data);
     setIsLoggedIn(true);
     localStorage.setItem("vitacore_user", JSON.stringify(res.data));
