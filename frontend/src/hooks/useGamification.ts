@@ -46,9 +46,9 @@ export function useGamification(): GamificationData {
     const fetchAllLogs = async () => {
       try {
         const [healthRes, financeRes, careerRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/health"),
-          axios.get("http://localhost:5000/api/finance"),
-          axios.get("http://localhost:5000/api/career"),
+          axios.get("https://vitacore-backend-sue1.onrender.com/api/health"),
+          axios.get("https://vitacore-backend-sue1.onrender.com/api/finance"),
+          axios.get("https://vitacore-backend-sue1.onrender.com/api/career"),
         ]);
 
         const healthLogs = Array.isArray(healthRes.data) ? healthRes.data : [];
