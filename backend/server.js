@@ -31,6 +31,7 @@ const healthRoutes = require('./routes/healthRoutes');
 const financeRoutes = require('./routes/financeRoutes');
 const careerRoutes = require('./routes/careerRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const goalRoutes = require('./routes/goalRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
@@ -38,6 +39,7 @@ app.use('/api/health', healthRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/career', careerRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/goals', goalRoutes);
 console.log('Novu Secret Key:', process.env.NOVU_SECRET_KEY ? 'Loaded ✅' : 'Missing ❌');
 
 // MongoDB connection

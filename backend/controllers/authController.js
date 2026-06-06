@@ -35,6 +35,7 @@ const registerUser = async (req, res) => {
         name: user.name,
         email: user.email,
         phoneNumber: user.phoneNumber,
+        income: user.income,
         token: generateToken(user._id),
       });
     } else {
@@ -56,6 +57,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         phoneNumber: user.phoneNumber,
+        income: user.income,
         token: generateToken(user._id),
       });
     } else {
@@ -87,6 +89,7 @@ const updateProfile = async (req, res) => {
 
     if (req.body.name) user.name = req.body.name;
     if (req.body.phoneNumber) user.phoneNumber = req.body.phoneNumber;
+    if (req.body.income !== undefined) user.income = req.body.income;
 
     const updatedUser = await user.save();
     res.json({
@@ -94,6 +97,7 @@ const updateProfile = async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       phoneNumber: updatedUser.phoneNumber,
+      income: updatedUser.income,
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -101,4 +105,3 @@ const updateProfile = async (req, res) => {
 };
 
 module.exports = { registerUser, loginUser, getProfile, updateProfile };
-
