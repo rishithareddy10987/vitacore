@@ -37,7 +37,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Finance() {
   const { themeColors, theme } = useTheme();
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
   const [logs, setLogs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -113,8 +113,17 @@ export default function Finance() {
     const newIncome = Number(incomeInput);
     if (isNaN(newIncome) || newIncome < 0) return;
     try {
-      const res = await axios.put("http://localhost:5000/api/auth/profile", { income: newIncome });
-      updateUser({ income: res.data.income });
+      const res = await axios.put(
+        `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/profile`,
+        { income: newIncome }
+      );
+      // Persist income directly to localStorage (works with any AuthContext version)
+      const stored = localStorage.getItem("vitacore_user");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const merged = { ...parsed, income: res.data.income ?? newIncome };
+        localStorage.setItem("vitacore_user", JSON.stringify(merged));
+      }
       setIsEditingIncome(false);
     } catch (error) {
       console.error(error);
