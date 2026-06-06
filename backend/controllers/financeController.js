@@ -1,5 +1,5 @@
 const Expense = require('../models/Expense');
-const UserFinance = require('../models/UserFinance');
+const User = require('../models/User');
 const { sendAutomaticSMS } = require('../utils/smsHelper');
 const mongoose = require('mongoose');
 
@@ -82,8 +82,8 @@ const addExpense = async (req, res) => {
 // @access  Private
 const getIncome = async (req, res) => {
   try {
-    const finance = await UserFinance.findOne({ user: req.user.id });
-    res.status(200).json({ monthlyIncome: finance?.monthlyIncome || 0 });
+    const user = await User.findById(req.user.id).select('income');
+    res.status(200).json({ monthlyIncome: user?.income || 0 });
   } catch (error) {
     res.status(500).json({ message: 'Server Error' });
   }
@@ -98,12 +98,12 @@ const updateIncome = async (req, res) => {
     if (monthlyIncome === undefined || monthlyIncome < 0) {
       return res.status(400).json({ message: 'Please provide a valid income amount' });
     }
-    const finance = await UserFinance.findOneAndUpdate(
-      { user: req.user.id },
-      { monthlyIncome },
-      { new: true, upsert: true }
-    );
-    res.status(200).json(finance);
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { income: monthlyIncome },
+      { new: true }
+    ).select('income');
+    res.status(200).json({ monthlyIncome: user.income });
   } catch (error) {
     res.status(500).json({ message: 'Server Error' });
   }
