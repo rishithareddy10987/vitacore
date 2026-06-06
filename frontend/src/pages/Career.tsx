@@ -188,7 +188,7 @@ export default function Career() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("https://vitacore-backend-sue1.onrender.com/api/career/api/career", formData);
+      await axios.post("https://vitacore-ml.onrender.com/simulate", formData);
       localStorage.setItem("studyHours", totalHours.toString());
       localStorage.setItem("completedTasks", milestones.filter(m => m.completed).length.toString());
       localStorage.setItem("focusScore", score.toString());
