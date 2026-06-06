@@ -128,7 +128,7 @@ export default function Career() {
 
   const fetchLogs = async () => {
     try {
-      const res = await axios.get("https://vitacore-backend-sue1.onrender.com/api/career/api/career");
+      const res = { data: [] };
       if (Array.isArray(res.data)) {
         setLogs(res.data);
       } else {
@@ -188,7 +188,7 @@ export default function Career() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("https://vitacore-ml.onrender.com/simulate", formData);
+      //await axios.post("https://vitacore-ml.onrender.com/simulate", formData);
       localStorage.setItem("studyHours", totalHours.toString());
       localStorage.setItem("completedTasks", milestones.filter(m => m.completed).length.toString());
       localStorage.setItem("focusScore", score.toString());
