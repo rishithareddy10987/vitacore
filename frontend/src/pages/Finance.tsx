@@ -114,7 +114,7 @@ export default function Finance() {
     if (isNaN(newIncome) || newIncome < 0) return;
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/profile`,
+        "https://vitacore-backend-sue1.onrender.com/api/auth/profile",
         { income: newIncome }
       );
       // Persist income directly to localStorage (works with any AuthContext version)
