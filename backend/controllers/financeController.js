@@ -1,4 +1,5 @@
 const Expense = require('../models/Expense');
+const UserFinance = require('../models/UserFinance');
 const { sendAutomaticSMS } = require('../utils/smsHelper');
 const mongoose = require('mongoose');
 
@@ -56,7 +57,7 @@ const addExpense = async (req, res) => {
         ]);
 
         const totalSpent = (monthlyExpenses[0]?.total || 0);
-        const monthlyBudget = 15000; // set standard threshold warning limit
+        const monthlyBudget = 15000;
 
         if (totalSpent > monthlyBudget) {
           const budgetExceededMsg = `💸 VitaCore Budget Alert: You have exceeded your monthly budget! Total spent: ₹${totalSpent.toLocaleString()} (Limit: ₹${monthlyBudget.toLocaleString()}). Try to minimize extra costs. 📉`;
@@ -76,4 +77,36 @@ const addExpense = async (req, res) => {
   }
 };
 
-module.exports = { getExpenses, addExpense };
+// @desc    Get monthly income
+// @route   GET /api/finance/income
+// @access  Private
+const getIncome = async (req, res) => {
+  try {
+    const finance = await UserFinance.findOne({ user: req.user.id });
+    res.status(200).json({ monthlyIncome: finance?.monthlyIncome || 0 });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Update monthly income
+// @route   PUT /api/finance/income
+// @access  Private
+const updateIncome = async (req, res) => {
+  try {
+    const { monthlyIncome } = req.body;
+    if (monthlyIncome === undefined || monthlyIncome < 0) {
+      return res.status(400).json({ message: 'Please provide a valid income amount' });
+    }
+    const finance = await UserFinance.findOneAndUpdate(
+      { user: req.user.id },
+      { monthlyIncome },
+      { new: true, upsert: true }
+    );
+    res.status(200).json(finance);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+module.exports = { getExpenses, addExpense, getIncome, updateIncome };
