@@ -90,7 +90,7 @@ export default function Career() {
   const addCustomPlatform = () => {
     if (!newPlatform.name.trim() || !newPlatform.url.trim()) return;
     const key = newPlatform.name.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
-    if (allPlatforms.some(p => p.key === key)) return; // prevent duplicate
+    if (allPlatforms.some(p => p.key === key)) return;
     const accents = ["#A78BFA", "#34D399", "#F472B6", "#60A5FA", "#FBBF24", "#F87171", "#38BDF8"];
     const accent = accents[customPlatforms.length % accents.length];
     const hex = accent.replace("#", "");
@@ -128,7 +128,9 @@ export default function Career() {
 
   const fetchLogs = async () => {
     try {
-      const res = { data: [] };
+      const res = await axios.get(
+        "https://vitacore-backend-sue1.onrender.com/api/career"
+      );
       if (Array.isArray(res.data)) {
         setLogs(res.data);
       } else {
@@ -185,16 +187,36 @@ export default function Career() {
     fullMark: 100
   }));
 
+  // ─── FIX: handleSubmit now adds the new log to state immediately ───
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      //await axios.post("https://vitacore-ml.onrender.com/simulate", formData);
+      // Build a new log entry with a timestamp
+      const newLog = {
+        topic: formData.topic,
+        durationMinutes: formData.durationMinutes,
+        notes: formData.notes,
+        date: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+      };
+
+      // Optimistically update local state so stats & heatmap reflect the new session instantly
+      setLogs(prev => [...prev, newLog]);
+
+      // Post to backend when it's live (uncomment to enable)
+      // await axios.post("https://vitacore-backend-sue1.onrender.com/api/career", formData);
+
+      // Persist summary values to localStorage
       localStorage.setItem("studyHours", totalHours.toString());
       localStorage.setItem("completedTasks", milestones.filter(m => m.completed).length.toString());
       localStorage.setItem("focusScore", score.toString());
       localStorage.setItem("skills", Object.keys(topicMap).join(", "));
-      fetchLogs(); // Refresh
+
+      // Reset the form
       setFormData({ topic: "", durationMinutes: 0, notes: "" });
+
+      // Optional: re-sync from backend once it's live
+      // fetchLogs();
     } catch (error) {
       console.error(error);
     }
@@ -556,39 +578,34 @@ export default function Career() {
                   {filteredPlatforms.map((p) => {
                     const isExpanded = expandedPlatform === p.key;
                     const streak = platformStreaks[p.key] || 0;
-                    
-                    // Generate 60 day streak data based on current streak count
+
                     const platformHeatmapData = Array.from({ length: 60 }).map((_, idx) => {
-                      // Highlight the last N days representing the current streak
                       const isActive = idx >= (60 - streak);
                       return { active: isActive };
                     });
 
                     return (
                       <React.Fragment key={p.key}>
-                        <tr 
+                        <tr
                           onClick={() => setExpandedPlatform(isExpanded ? null : p.key)}
-                          style={{ 
-                            borderBottom: "1px solid rgba(255,255,255,0.05)", 
-                            cursor: "pointer", 
+                          style={{
+                            borderBottom: "1px solid rgba(255,255,255,0.05)",
+                            cursor: "pointer",
                             background: isExpanded ? "rgba(139,92,246,0.05)" : "transparent",
-                            transition: "all 0.2s ease" 
+                            transition: "all 0.2s ease"
                           }}
                           onMouseEnter={(e) => { if (!isExpanded) e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
                           onMouseLeave={(e) => { if (!isExpanded) e.currentTarget.style.background = "transparent"; }}
                         >
-                          {/* Platform Name column */}
                           <td style={{ padding: "18px 24px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                               <span style={{ fontSize: 24 }}>{p.emoji}</span>
                               <span style={{ fontSize: 15, fontWeight: 800, color: "#e2d9ff" }}>{p.name}</span>
                             </div>
                           </td>
-                          {/* Description column */}
                           <td style={{ padding: "18px 24px" }}>
                             <span style={{ fontSize: 13, fontWeight: 500, color: "rgba(196,181,253,0.7)" }}>{p.desc}</span>
                           </td>
-                          {/* Streak Badge column */}
                           <td style={{ padding: "18px 24px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                               <Flame size={16} color={p.accent} />
@@ -598,7 +615,6 @@ export default function Career() {
                               </span>
                             </div>
                           </td>
-                          {/* Link column (simplified, no circle background, clean hover color) */}
                           <td style={{ padding: "18px 24px", textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
                             <a
                               href={p.url}
@@ -619,7 +635,7 @@ export default function Career() {
                             </a>
                           </td>
                         </tr>
-                        
+
                         {/* Expanded Heatmap Row */}
                         {isExpanded && (
                           <tr style={{ background: "rgba(16,12,38,0.92)", borderBottom: "1px solid rgba(139,92,246,0.15)" }}>
@@ -634,7 +650,7 @@ export default function Career() {
                                   <h4 style={{ fontSize: 13, fontWeight: 800, color: "#e2d9ff", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
                                     <Flame size={16} color={p.accent} /> {p.name} Study Streak tracker (Last 60 Days)
                                   </h4>
-                                  
+
                                   {/* Inline Streak Editor */}
                                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                     <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(196,181,253,0.5)", textTransform: "uppercase" }}>Adjust Streak:</span>
@@ -680,7 +696,6 @@ export default function Career() {
                                 {/* Dynamic Grid Heatmap */}
                                 <div style={{ display: "flex", flexWrap: "wrap", gap: 5, padding: "4px 0" }}>
                                   {platformHeatmapData.map((d, index) => {
-                                    // Highlight squares if they are active in the streak
                                     const bg = d.active ? p.accent : "rgba(107,92,231,0.06)";
                                     return (
                                       <motion.div
@@ -720,7 +735,7 @@ export default function Career() {
               </table>
             </div>
 
-            {/* ── Add Custom Platform ── */}
+            {/* Add Custom Platform */}
             <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(196,181,253,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
