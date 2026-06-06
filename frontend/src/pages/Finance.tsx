@@ -66,7 +66,7 @@ export default function Finance() {
 
   const fetchGoals = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/goals");
+      const res = await axios.get("https://vitacore-backend-sue1.onrender.com/api/goals");
       if (Array.isArray(res.data)) {
         // Filter goals to only show Finance goals in the savings tracker
         setGoals(res.data.filter(g => g.domain === "Finance"));
@@ -83,7 +83,7 @@ export default function Finance() {
 
   const fetchLogs = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/finance");
+      const res = await axios.get("https://vitacore-backend-sue1.onrender.com/api/finance");
       if (Array.isArray(res.data)) {
         setLogs(res.data);
       } else {
@@ -133,7 +133,7 @@ export default function Finance() {
   const handleCreateGoal = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/goals", {
+      await axios.post("https://vitacore-backend-sue1.onrender.com/api/goals", {
         title: goalForm.title,
         domain: "Finance",
         targetValue: Number(goalForm.targetValue),
@@ -151,7 +151,7 @@ export default function Finance() {
     const contribution = contributions[goalId];
     if (!contribution || isNaN(Number(contribution)) || Number(contribution) <= 0) return;
     try {
-      await axios.put(`http://localhost:5000/api/goals/${goalId}`, {
+      await axios.put(`https://vitacore-backend-sue1.onrender.com/api/goals/${goalId}`, {
         contribution: Number(contribution)
       });
       fetchGoals();
@@ -164,7 +164,7 @@ export default function Finance() {
   const handleDeleteGoal = async (goalId: string) => {
     if (!window.confirm("Are you sure you want to delete this savings goal?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/goals/${goalId}`);
+      await axios.delete(`https://vitacore-backend-sue1.onrender.com/api/goals/${goalId}`);
       fetchGoals();
     } catch (error) {
       console.error(error);
@@ -174,7 +174,7 @@ export default function Finance() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/finance", {
+      await axios.post("https://vitacore-backend-sue1.onrender.com/api/finance", {
         amount: formData.amount,
         category: formData.category,
         description: formData.description,
